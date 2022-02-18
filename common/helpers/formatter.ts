@@ -1,4 +1,3 @@
-import { BloomWeb3 } from '../../../type'
 import moment from 'moment'
 interface FormatedChain {
     type: BloomWeb3['chains']
@@ -17,9 +16,26 @@ interface IFormatter {
     ): string
     formatDate(date: number): string
     formatDecimal(float: number, decimalPlaces: number): number
+    formatCurrency(amount: number, currencyType: string): string
+    getFormatDate(): string
 }
 
 class Formatter implements IFormatter {
+    getFormatDate(): string {
+        return 'DD/MM/YYYY HH:mm:ss'
+    }
+    /**
+     *
+     * @param amount Amount to format
+     * @return A string with formated number
+     */
+    formatCurrency(amount: number, currencyType: string): string {
+        const dollarUSLocale = Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currencyType
+        })
+        return dollarUSLocale.format(amount)
+    }
     /**
      * @description Rounds a float number to a setted decimal places
      * @param floatNumber A float/decimal number
