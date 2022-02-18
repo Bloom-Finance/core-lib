@@ -11,7 +11,9 @@ class OrderService implements IOrderService {
     async get(id: string): Promise<Order> {
         const docRef = doc(firebaseManager.getDB(), 'orders', id)
         const docSnap = await getDoc(docRef)
-        const merchant = await merchantService.get(docSnap.data().merchant)
+        const order = docSnap.data()
+        if(!order)  Promise.reject('Couldnt resolve promise')
+        const merchant = await merchantService.get( order?.merchant)
         return {
             ...docSnap.data(),
             merchant
