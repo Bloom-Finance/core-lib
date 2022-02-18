@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { FormatterManager } from '../../common/helpers/formatter'
+import { FormatterManager } from '../common/helpers/formatter'
 import { removeToken } from './auth.service'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Moralis from 'moralis'
