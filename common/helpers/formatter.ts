@@ -1,3 +1,4 @@
+import { slice } from 'lodash'
 import moment from 'moment'
 interface FormatedChain {
     type: BloomWeb3['chains']
@@ -17,10 +18,21 @@ interface IFormatter {
     formatDate(date: number): string
     formatDecimal(float: number, decimalPlaces: number): number
     formatCurrency(amount: number, currencyType: string): string
+    formatWalletAddress(address: string): string
     getFormatDate(): string
 }
 
 class Formatter implements IFormatter {
+    /**
+     *
+     * @param address Wallet address to pass as an argument
+     * @return Returns a formated wallet address to be shown
+     */
+    formatWalletAddress(address: string): string {
+        const firstDigits = address.slice(0, 5)
+        const lastDigitis = address.slice(-4)
+        return `${firstDigits}...${lastDigitis}`
+    }
     getFormatDate(): string {
         return 'DD/MM/YYYY HH:mm:ss'
     }
