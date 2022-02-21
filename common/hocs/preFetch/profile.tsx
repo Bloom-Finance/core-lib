@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import Loader from '../../../../ui-lib/src/components/loader/index'
 import { OrdersManager } from '../../../../services/order.service'
-import { Merchant, Order, User } from '../../../../type'
 import { ErrorHandler } from '../../helpers/errorHandler'
 import { useEffect } from 'react'
 import _ from 'lodash'
@@ -21,7 +20,7 @@ const withPreFetchProfile = <P extends object>(
         const merchantData = MerchantStore.useState(s => s)
         const getData = async () => {
             const sessionToken = getToken()
-            const decodedToken = tokenDecode(sessionToken)
+            const decodedToken: SessionUser = tokenDecode(sessionToken)
             decodedToken.merchants?.forEach(k => {
                 if (k.merchant !== id || k.role !== 'ADMIN') {
                     router.back()

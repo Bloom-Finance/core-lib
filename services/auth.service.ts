@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { firebaseManager } from '../../services/firebase.services'
 import { doc, getDoc } from 'firebase/firestore'
-import { SessionUser, User } from '../../type'
 
 export const tokenDecode = (token: string): SessionUser => {
     return jwt.decode(token) as SessionUser
