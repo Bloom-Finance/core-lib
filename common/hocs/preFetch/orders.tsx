@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import Loader from '../../../../ui-lib/src/components/loader/index'
-import { OrdersManager } from '../../../../services/order.service'
+import { OrdersManager } from '../../../services/order.service'
 import { ErrorHandler } from '../../helpers/errorHandler'
 import { useEffect } from 'react'
 import _ from 'lodash'
