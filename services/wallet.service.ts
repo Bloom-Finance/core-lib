@@ -55,4 +55,12 @@ export class WalletManager {
             this.activeProvider.provider?.chainId as number
         )
     }
+
+    /**
+     * Returns the wallet address of current user
+     * @returns the address
+     */
+    getAddressCurrentUser(): string {
+        return Moralis.User.current()?.attributes.ethAddress
+    }
 }
