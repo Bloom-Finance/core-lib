@@ -84,6 +84,8 @@ class Formatter implements IFormatter {
         switch (WC_CHAIN) {
             case 1:
                 return { type: 'eth', label: 'Ethereum' }
+            case 3:
+                return { type: 'ropsten', label: 'Ropsten' }
             case 43114:
                 return { type: 'avalanche', label: 'Avalanche' }
             case 137:
@@ -134,6 +136,10 @@ class Formatter implements IFormatter {
             {
                 chain: 'fantom',
                 addresses: ['0x8d11ec38a3eb5e956b052f67da8bdc9bef8abf3e']
+            },
+            {
+                chain: 'ropsten',
+                addresses: ['0x0ba54510d3b95ba4173a2c4c86be27561bb36678']
             }
         ]
     }
