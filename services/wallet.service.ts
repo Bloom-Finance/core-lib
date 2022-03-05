@@ -3,6 +3,8 @@ import { FormatterManager } from '../common/helpers/formatter'
 import { removeToken } from './auth.service'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Moralis from 'moralis'
+import _ from 'lodash'
+
 interface activeProvider {
     provider?: WalletConnectProvider
 }
@@ -62,5 +64,37 @@ export class WalletManager {
      */
     getAddressCurrentUser(): string {
         return Moralis.User.current()?.attributes.ethAddress
+    }
+
+    /**
+     * @returns URL Icon wallet or null
+     */
+    getWalletIcon(): string {
+        const firstElement = _.head(
+            this.activeProvider.provider?.walletMeta?.icons
+        )
+        return firstElement as string
+    }
+
+    async getBalances() {
+        const balances = await Moralis.Web3API.account.getTokenBalances({
+            chain: 'ropsten',
+            address: this.getAddressCurrentUser()
+        })
+
+        const native = await Moralis.Web3API.account.getNativeBalance({
+            chain: 'ropsten',
+            address: this.getAddressCurrentUser()
+        })
+
+        balances.push({
+            balance: native.balance,
+            decimals: '18',
+            name: 'Ethereum',
+            symbol: 'ETH',
+            token_address: ''
+        })
+
+        return balances
     }
 }
