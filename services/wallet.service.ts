@@ -4,6 +4,7 @@ import { removeToken } from './auth.service'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Moralis from 'moralis'
 import _ from 'lodash'
+import moment from 'moment'
 
 interface activeProvider {
     provider?: WalletConnectProvider
@@ -76,8 +77,22 @@ export class WalletManager {
         return firstElement as string
     }
 
+    async getTokenPrice(token_address: string) {
+        Moralis.Web3API.native.getDateToBlock({
+            date: moment(new Date()).subtract(3, 'minute').toString()
+        })
+        const result = await Moralis.Web3API.token.getTokenPrice({
+            address: token_address,
+            chain: 'eth'
+        })
+
+        return {
+            price: result.usdPrice
+        }
+    }
+
     async getBalances() {
-        const balances = await Moralis.Web3API.account.getTokenBalances({
+        const balances: any = await Moralis.Web3API.account.getTokenBalances({
             chain: 'ropsten',
             address: this.getAddressCurrentUser()
         })
@@ -87,12 +102,20 @@ export class WalletManager {
             address: this.getAddressCurrentUser()
         })
 
+        for (const i in balances) {
+            const price = await this.getTokenPrice(balances[i].token_address)
+            balances[i] = {
+                ...balances[i],
+                price
+            }
+        }
+
         balances.push({
             balance: native.balance,
             decimals: '18',
             name: 'Ethereum',
             symbol: 'ETH',
-            token_address: ''
+            token_address: '0x42F6f551ae042cBe50C739158b4f0CAC0Edb9096'
         })
 
         return balances
