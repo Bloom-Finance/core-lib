@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+
 import {
     ref,
     getStorage,
@@ -8,16 +9,30 @@ import {
     deleteObject,
     getMetadata,
     FullMetadata,
-    getDownloadURL
+    getDownloadURL,
+    connectStorageEmulator
 } from 'firebase/storage'
-import { getDatabase } from 'firebase/database'
 
-class FirebaseManager {
+const RUNTIME = process.env.RUNTIME || 'DEV'
+
+export class FirebaseManager {
     private firebaseApp: any
     private storage: any
     private realTimeDB: any
+    private db: any = null
     constructor() {
-        if (process.env.FIREBASE) {
+        if (RUNTIME === 'DEV') {
+            this.firebaseApp = initializeApp({ projectId: 'bloom-trade' })
+            this.db = getFirestore()
+            connectFirestoreEmulator(this.db, 'localhost', 8080)
+            this.storage = getStorage(
+                undefined,
+                'gs://bloom-trade.appspot.com/'
+            )
+            connectStorageEmulator(this.storage, 'localhost', 9199)
+        }
+
+        if (RUNTIME !== 'DEV' && process.env.FIREBASE) {
             this.firebaseApp = initializeApp(
                 JSON.parse(
                     Buffer.from(
@@ -26,15 +41,11 @@ class FirebaseManager {
                     ).toString()
                 )
             )
-            this.storage = getStorage()
-            this.realTimeDB = getDatabase()
-        } else {
-            console.log('vacio')
         }
     }
-
     getDB() {
-        return getFirestore()
+        if (RUNTIME === 'DEV') return this.db
+        else return getFirestore()
     }
     getRealTimeDB() {
         return this.realTimeDB
@@ -47,21 +58,32 @@ class FirebaseManager {
         return this.firebaseApp
     }
 
-    uploadFile(file: File, storagePath?: string): Promise<UploadResult> {
+    async uploadFile(file: File, storagePath?: string): Promise<UploadResult> {
         const storageRef = ref(
             this.storage,
-            `${storagePath || 'images'}/${file.name}`
+            `${storagePath || ''}/${file.name}`
         )
         return uploadBytes(storageRef, file)
     }
-    deleteFile(fileName: string, storagePath: string): Promise<void> {
-        const storageRef = ref(this.storage, `${storagePath}/${fileName}`)
+
+    deleteFile(fileName: any): Promise<any> {
+        const storageRef = ref(this.storage, `files/${fileName}`)
         return deleteObject(storageRef)
     }
+
     getFileBlobUrl(fullPath: string): Promise<string> {
         const storageRef = ref(this.storage, fullPath)
         return getDownloadURL(storageRef)
     }
+
+    getFile(fileName: any) {
+        const listRef = ref(this.storage, `${fileName}`)
+        return getMetadata(listRef)
+    }
+    async getFileUrl(fullPath: string) {
+        return getDownloadURL(ref(this.storage, fullPath))
+    }
+
     async getFileMetadata(
         fileName: string,
         storagePath: string
