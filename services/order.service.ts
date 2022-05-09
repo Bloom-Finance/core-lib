@@ -1,6 +1,8 @@
 import { doc, getDoc } from 'firebase/firestore'
 import { firebaseManager, FirebaseManager } from './firebase.services'
 import { merchantService } from './merchant.service'
+import { customAlphabet } from 'nanoid'
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
 
 class OrderService {
     private db
@@ -20,6 +22,13 @@ class OrderService {
             ...order,
             merchant
         } as Order
+    }
+
+    async addPayment(order: Order) {
+        const payment: Payment = {
+            id: nanoid(),
+            
+        }
     }
 }
 
