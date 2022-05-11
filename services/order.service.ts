@@ -26,8 +26,7 @@ class OrderService {
 
     async addPayment(order: Order) {
         const payment: Payment = {
-            id: nanoid(),
-            
+            id: nanoid()
         }
     }
 }
