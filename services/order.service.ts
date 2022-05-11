@@ -15,9 +15,7 @@ class OrderService {
         const docRef = doc(this.db, 'orders', id)
         const docSnap = await getDoc(docRef)
         const order = docSnap.data() as Order
-
         const merchant = await merchantService.get(order.merchant.toString())
-
         return {
             ...order,
             merchant

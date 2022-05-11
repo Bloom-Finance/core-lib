@@ -109,7 +109,6 @@ export class WalletManager {
                 price
             }
         }
-
         balances.push({
             balance: native.balance,
             decimals: '18',
@@ -117,7 +116,6 @@ export class WalletManager {
             symbol: 'ETH',
             token_address: '0x42F6f551ae042cBe50C739158b4f0CAC0Edb9096'
         })
-
         return balances
     }
 }
