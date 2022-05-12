@@ -1,4 +1,4 @@
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { firebaseManager, FirebaseManager } from './firebase.services'
 import { merchantService } from './merchant.service'
 import { customAlphabet } from 'nanoid'
@@ -22,10 +22,34 @@ class OrderService {
         } as Order
     }
 
-    async addPayment(order: Order) {
+    async addStripePayment(orderId: string, paymentInfo: any) {
         const payment: Payment = {
-            id: nanoid()
+            id: nanoid(),
+            date: new Date().getTime(),
+            order_id: orderId,
+            pay_with: {
+                stripe: paymentInfo
+            }
         }
+
+        await setDoc(
+            doc(firebaseManager.getDB(), 'payments', payment.id),
+            payment
+        )
+
+        const storedOrder = await doc(
+            firebaseManager.getDB(),
+            'orders',
+            orderId
+        )
+
+        await updateDoc(storedOrder, {
+            status: 'PAYED',
+            payment_info: {
+                issued_at: new Date().getTime(),
+                payment_id: payment.id
+            }
+        })
     }
 }
 

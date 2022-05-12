@@ -37,6 +37,7 @@ class StripeManager implements IStripeManager {
         currency: 'usd' | 'ars'
         unit_amount: number
         product_data: { name: string }
+        order_id: string
     }): AxiosPromise<{ url: string; msg: string }> {
         return axios.post('/api/checkout_sessions', body)
     }
