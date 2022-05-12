@@ -5,7 +5,7 @@ import { OrdersManager } from '../../../services/order-old.service'
 import { ErrorHandler } from '../../helpers/errorHandler'
 import { useEffect } from 'react'
 import _ from 'lodash'
-const withPreFetch = <P extends object>(Component: React.ComponentType<P>) => {
+const withPreFetch = <P extends object>(Component: any) => {
     const PreFetch = (props: any) => {
         const router = useRouter()
         const { id } = router.query
