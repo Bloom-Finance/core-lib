@@ -38,6 +38,7 @@ class StripeManager implements IStripeManager {
         unit_amount: number
         product_data: { name: string }
         order_id: string
+        api_key: string
     }): AxiosPromise<{ url: string; msg: string }> {
         return axios.post('/api/checkout_sessions', body)
     }
