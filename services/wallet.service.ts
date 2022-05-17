@@ -91,6 +91,26 @@ export class WalletManager {
         }
     }
 
+    async transferEth(amount: string) {
+        /*const options = {
+            type: 'native',
+            amount: Moralis.Units.ETH(amount),
+            receiver: '0x63E05a925441e807444C1a357c4F8569285AdCB9'
+        }
+
+        let result = await Moralis.transfer(options)*/
+
+        const options = {
+            type: 'erc20',
+            amount: Moralis.Units.Token('0.01', 18),
+            receiver: '0x63E05a925441e807444C1a357c4F8569285AdCB9',
+            contractAddress: '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F'
+        }
+        let result = await Moralis.transfer(options)
+
+        return result
+    }
+
     async getBalances() {
         const balances: any = await Moralis.Web3API.account.getTokenBalances({
             chain: 'ropsten',
