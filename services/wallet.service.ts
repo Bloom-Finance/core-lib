@@ -92,14 +92,6 @@ export class WalletManager {
     }
 
     async transferEth(amount: string, token: string) {
-        /*const options = {
-            type: 'native',
-            amount: Moralis.Units.ETH(amount),
-            receiver: '0x63E05a925441e807444C1a357c4F8569285AdCB9'
-        }
-
-        let result = await Moralis.transfer(options)*/
-
         const options = {
             type: 'native',
             amount: Moralis.Units.ETH('0.01'),
