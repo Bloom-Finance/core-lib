@@ -91,7 +91,7 @@ export class WalletManager {
         }
     }
 
-    async transferEth(amount: string) {
+    async transferEth(amount: string, token: string) {
         /*const options = {
             type: 'native',
             amount: Moralis.Units.ETH(amount),
@@ -101,12 +101,11 @@ export class WalletManager {
         let result = await Moralis.transfer(options)*/
 
         const options = {
-            type: 'erc20',
-            amount: Moralis.Units.Token('0.01', 18),
-            receiver: '0x63E05a925441e807444C1a357c4F8569285AdCB9',
-            contractAddress: '0x094616F0BdFB0b526bD735Bf66Eca0Ad254ca81F'
+            type: 'native',
+            amount: Moralis.Units.ETH('0.01'),
+            receiver: '0x63E05a925441e807444C1a357c4F8569285AdCB9'
         }
-        let result = await Moralis.transfer(options)
+        const result = await Moralis.transfer(options)
 
         return result
     }
@@ -122,13 +121,15 @@ export class WalletManager {
             address: this.getAddressCurrentUser()
         })
 
+        /* 
+        Review get price in block window
         for (const i in balances) {
             const price = await this.getTokenPrice(balances[i].token_address)
             balances[i] = {
                 ...balances[i],
                 price
             }
-        }
+        }*/
         balances.push({
             balance: native.balance,
             decimals: '18',
