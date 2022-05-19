@@ -111,6 +111,19 @@ export class WalletManager {
         return result
     }
 
+    async transferToken(amount: string, token: any) {
+        const options = {
+            type: 'native',
+            amount: Moralis.Units.Token(amount, token.decimals),
+            receiver: '0x63E05a925441e807444C1a357c4F8569285AdCB9'
+        }
+
+        const moralisHandler = Moralis as any
+        const result = await moralisHandler.transfer(options)
+
+        return result
+    }
+
     async getBalances() {
         const balances: any = await Moralis.Web3API.account.getTokenBalances({
             chain: 'ropsten',
