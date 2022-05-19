@@ -22,14 +22,24 @@ class OrderService {
         } as Order
     }
 
-    async addStripePayment(orderId: string, paymentInfo: any) {
+    async addPayment(orderId: string, paymentInfo: any) {
+        const pay_with: any = {}
+
+        if (paymentInfo.payment_type === 'CREDIT CARD')
+            pay_with.stripe = paymentInfo
+
+        if (paymentInfo.payment_type === 'BANK TRANSFER')
+            pay_with.bank_transfer = paymentInfo
+
         const payment: Payment = {
             id: nanoid(),
             date: new Date().getTime(),
             order_id: orderId,
-            pay_with: {
-                stripe: paymentInfo
-            }
+            pay_with,
+            status:
+                paymentInfo.payment_type === 'CREDIT CARD'
+                    ? 'CONFIRMED'
+                    : 'IN REVIEW'
         }
 
         await setDoc(
@@ -44,7 +54,10 @@ class OrderService {
         )
 
         await updateDoc(storedOrder, {
-            status: 'PAYED',
+            status:
+                paymentInfo.payment_type === 'CREDIT CARD'
+                    ? 'PAYED'
+                    : 'IN REVIEW',
             payment_info: {
                 issued_at: new Date().getTime(),
                 payment_id: payment.id
