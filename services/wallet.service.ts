@@ -143,6 +143,39 @@ export class WalletManager {
             symbol: 'ETH',
             token_address: '0x42F6f551ae042cBe50C739158b4f0CAC0Edb9096'
         })
+
+        /* const options = {
+            chain: 'ropsten',
+            addresses: balances.map(b => b.token_address)
+        }
+
+        const tokenMetadata = await Moralis.Web3API.token.getTokenMetadata(
+            options as any
+        )
+        console.log(tokenMetadata)*/
         return balances
+    }
+
+    rankTransactions(balances: Array<any>) {
+        const list = []
+        for (let i in balances) {
+            let element = balances[i]
+            if (balances[i].symbol === 'USDT') {
+                element = {
+                    ...element,
+                    kind_of_transaction: 'FASTER'
+                }
+            }
+            if (balances[i].symbol === 'ETH') {
+                element = {
+                    ...element,
+                    kind_of_transaction: 'EXPENSIVE'
+                }
+            }
+
+            list.push(element)
+        }
+
+        return list
     }
 }
