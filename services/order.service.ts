@@ -2,6 +2,7 @@ import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { firebaseManager, FirebaseManager } from './firebase.services'
 import { merchantService } from './merchant.service'
 import { customAlphabet } from 'nanoid'
+import axios from 'axios'
 const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
 
 class OrderService {
@@ -63,6 +64,27 @@ class OrderService {
             payment_info: {
                 issued_at: new Date().getTime(),
                 payment_id: payment.id
+            }
+        })
+
+        axios.post('/api/order/inform_payment', {
+            order_id: orderId
+        })
+    }
+
+    async updateConsumerEmail(orderId: string, email: string) {
+        const storedOrder = await doc(
+            firebaseManager.getDB(),
+            'orders',
+            orderId
+        )
+
+        const orderData = (await (await getDoc(storedOrder)).data()) as Order
+
+        await updateDoc(storedOrder, {
+            consumer_info: {
+                ...orderData.consumer_info,
+                email
             }
         })
     }

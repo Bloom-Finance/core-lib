@@ -20,6 +20,8 @@ export class FirebaseManager {
     private storage: any
     private realTimeDB: any
     private db: any = null
+    private pubSub: any
+
     constructor() {
         if (RUNTIME === 'DEV') {
             this.firebaseApp = initializeApp({ projectId: 'bloom-trade' })
