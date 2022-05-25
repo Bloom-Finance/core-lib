@@ -17,7 +17,6 @@ class OrderService {
         const docSnap = await getDoc(docRef)
         const order = docSnap.data() as Order
 
-        console.log(this.db, order)
         const merchant = await merchantService.get(order.merchant.toString())
         return {
             ...order,
@@ -67,9 +66,11 @@ class OrderService {
             }
         })
 
-        axios.post('/api/order/inform_payment', {
-            order_id: orderId
-        })
+        if (paymentInfo.payment_type !== 'BANK TRANSFER') {
+            axios.post('/api/order/inform_payment', {
+                order_id: orderId
+            })
+        }
     }
 
     async updateConsumerEmail(orderId: string, email: string) {
