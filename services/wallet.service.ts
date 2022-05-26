@@ -78,12 +78,14 @@ export class WalletManager {
     }
 
     async getTokenPrice(token_address: string) {
-        Moralis.Web3API.native.getDateToBlock({
+        const block = await Moralis.Web3API.native.getDateToBlock({
             date: moment(new Date()).subtract(3, 'minute').toString()
         })
+
         const result = await Moralis.Web3API.token.getTokenPrice({
             address: token_address,
-            chain: 'eth'
+            chain: 'eth',
+            to_block: block.block
         })
 
         return {
@@ -127,15 +129,15 @@ export class WalletManager {
             address: this.getAddressCurrentUser()
         })
 
-        /* 
-        Review get price in block window
-        for (const i in balances) {
+        // Review get price in block window
+        /* for (const i in balances) {
             const price = await this.getTokenPrice(balances[i].token_address)
             balances[i] = {
                 ...balances[i],
                 price
             }
         }*/
+
         balances.push({
             balance: native.balance,
             decimals: '18',
@@ -143,6 +145,8 @@ export class WalletManager {
             symbol: 'ETH',
             token_address: '0x42F6f551ae042cBe50C739158b4f0CAC0Edb9096'
         })
+
+        console.log(balances)
 
         /* const options = {
             chain: 'ropsten',
@@ -158,7 +162,7 @@ export class WalletManager {
 
     rankTransactions(balances: Array<any>) {
         const list = []
-        for (let i in balances) {
+        for (const i in balances) {
             let element = balances[i]
             if (balances[i].symbol === 'USDT') {
                 element = {
