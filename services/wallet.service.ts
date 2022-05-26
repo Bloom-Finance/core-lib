@@ -77,20 +77,24 @@ export class WalletManager {
         return firstElement as string
     }
 
-    async getTokenPrice(token_address: string) {
-        const block = await Moralis.Web3API.native.getDateToBlock({
+    async getTokenPrice(symbol: string) {
+        if (symbol === 'ETH') return 1900
+
+        if (symbol === 'USDT') return 0.96
+
+        /* const block = await Moralis.Web3API.native.getDateToBlock({
             date: moment(new Date()).subtract(3, 'minute').toString()
         })
 
         const result = await Moralis.Web3API.token.getTokenPrice({
             address: token_address,
-            chain: 'eth',
-            to_block: block.block
+            chain: 'eth'
         })
 
+        console.log(result)
         return {
             price: result.usdPrice
-        }
+        }*/
     }
 
     async transferEth(amount: string, token: string) {
@@ -129,15 +133,6 @@ export class WalletManager {
             address: this.getAddressCurrentUser()
         })
 
-        // Review get price in block window
-        /* for (const i in balances) {
-            const price = await this.getTokenPrice(balances[i].token_address)
-            balances[i] = {
-                ...balances[i],
-                price
-            }
-        }*/
-
         balances.push({
             balance: native.balance,
             decimals: '18',
@@ -146,17 +141,15 @@ export class WalletManager {
             token_address: '0x42F6f551ae042cBe50C739158b4f0CAC0Edb9096'
         })
 
-        console.log(balances)
+        for (const i in balances) {
+            //const price = await this.getTokenPrice(balances[i].symbol)
 
-        /* const options = {
-            chain: 'ropsten',
-            addresses: balances.map(b => b.token_address)
+            balances[i] = {
+                ...balances[i],
+                id: balances[i].name.split(' ')[0].toLowerCase()
+            }
         }
 
-        const tokenMetadata = await Moralis.Web3API.token.getTokenMetadata(
-            options as any
-        )
-        console.log(tokenMetadata)*/
         return balances
     }
 
