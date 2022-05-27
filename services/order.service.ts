@@ -7,11 +7,9 @@ const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
 
 class OrderService {
     private db
-
     constructor(fm: FirebaseManager) {
         this.db = fm.getDB()
     }
-
     async getOrder(id: string) {
         const docRef = doc(this.db, 'orders', id)
         const docSnap = await getDoc(docRef)
@@ -21,9 +19,16 @@ class OrderService {
         return {
             ...order,
             merchant
-        } as Order
+        } as unknown as Order
     }
-
+    async newOrder(order: Order) {
+        try {
+            await setDoc(doc(firebaseManager.getDB(), 'payments'), order)
+            // Informar el order al topic
+        } catch (error) {
+            console.error(error)
+        }
+    }
     async addPayment(orderId: string, paymentInfo: any) {
         const pay_with: any = {}
 

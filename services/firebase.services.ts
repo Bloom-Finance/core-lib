@@ -1,5 +1,12 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+import {
+    connectFunctionsEmulator,
+    Functions,
+    getFunctions,
+    httpsCallable,
+    HttpsCallableResult
+} from 'firebase/functions'
 
 import {
     ref,
@@ -21,16 +28,18 @@ export class FirebaseManager {
     private realTimeDB: any
     private db: any = null
     private pubSub: any
-
+    private functions: Functions | undefined
     constructor() {
         if (RUNTIME === 'DEV') {
             this.firebaseApp = initializeApp({ projectId: 'bloom-trade' })
+            this.functions = getFunctions()
             this.db = getFirestore()
             connectFirestoreEmulator(this.db, 'localhost', 8080)
             this.storage = getStorage(
                 undefined,
                 'gs://bloom-trade.appspot.com/'
             )
+            connectFunctionsEmulator(this.functions, 'localhost', 5001)
             connectStorageEmulator(this.storage, 'localhost', 9199)
         }
 
@@ -55,11 +64,16 @@ export class FirebaseManager {
     getAuth() {
         return this.firebaseApp.getAuth()
     }
-
+    getFunction(functionName: CloudFunctions) {
+        return httpsCallable(this.functions as Functions, functionName)
+    }
+    callFunction<T>(functionName: CloudFunctions, data: any) {
+        const func = this.getFunction(functionName)
+        return func(data) as Promise<HttpsCallableResult<T>>
+    }
     getFirebaseApp() {
         return this.firebaseApp
     }
-
     async uploadFile(file: File, storagePath?: string): Promise<UploadResult> {
         const storageRef = ref(
             this.storage,

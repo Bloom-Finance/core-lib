@@ -1,5 +1,6 @@
 import axios, { AxiosPromise } from 'axios'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { HttpsCallable, HttpsCallableResult } from 'firebase/functions'
 import { firebaseManager } from './firebase.services'
 
 interface IQuickbookService {
@@ -7,13 +8,15 @@ interface IQuickbookService {
         redirect_uri: string
         code: string
         merchant: Merchant
-    }): AxiosPromise<{
-        x_refresh_token: number
-        refresh_token: string
-        access_token: string
-        token_type: string
-        expires_in: number
-    }>
+    }): Promise<
+        HttpsCallableResult<{
+            x_refresh_token: number
+            refresh_token: string
+            access_token: string
+            token_type: string
+            expires_in: number
+        }>
+    >
     saveTokens(
         refresh_token: string,
         merchant_id: string
@@ -29,27 +32,43 @@ interface IQuickbookService {
     retrieveAccessToken(
         refresh_token: string,
         merchant: Merchant
-    ): AxiosPromise<{
-        x_refresh_token: number
-        refresh_token: string
-        access_token: string
-        token_type: string
-        expires_in: number
-    }>
+    ): Promise<
+        HttpsCallableResult<{
+            x_refresh_token: number
+            refresh_token: string
+            access_token: string
+            token_type: string
+            expires_in: number
+        }>
+    >
 }
 
 class QuickBookService implements IQuickbookService {
-    retrieveAccessToken(
+    /**
+     * @description Gets the access token from a refresh token
+     * @param refresh_token The refresh token needed
+     * @param merchant The owner of the refresh_token
+     * @return An object with all the tokens
+     */
+    async retrieveAccessToken(
         refresh_token: string,
         merchant: Merchant
-    ): AxiosPromise<{
-        x_refresh_token: number
-        refresh_token: string
-        access_token: string
-        token_type: string
-        expires_in: number
-    }> {
-        return axios.post(`${process.env.CF_API}/quickbook_refresh`, {
+    ): Promise<
+        HttpsCallableResult<{
+            x_refresh_token: number
+            refresh_token: string
+            access_token: string
+            token_type: string
+            expires_in: number
+        }>
+    > {
+        return firebaseManager.callFunction<{
+            x_refresh_token: number
+            refresh_token: string
+            access_token: string
+            token_type: string
+            expires_in: number
+        }>('quickbookRefresh', {
             refresh_token,
             merchant,
             grant_type: 'refresh_token'
@@ -114,6 +133,7 @@ class QuickBookService implements IQuickbookService {
             await updateDoc(docRef, {
                 quickbook: {
                     refresh_token,
+                    realmId: merchant.quickbook.realmId,
                     credentials: {
                         client_id: merchant.quickbook.credentials.client_id,
                         client_secret:
@@ -140,14 +160,22 @@ class QuickBookService implements IQuickbookService {
         redirect_uri: string
         code: string
         merchant: Merchant
-    }): AxiosPromise<{
-        x_refresh_token: number
-        refresh_token: string
-        access_token: string
-        token_type: string
-        expires_in: number
-    }> {
-        return axios.post(`${process.env.CF_API}/quickbook_callback`, data)
+    }): Promise<
+        HttpsCallableResult<{
+            x_refresh_token: number
+            refresh_token: string
+            access_token: string
+            token_type: string
+            expires_in: number
+        }>
+    > {
+        return firebaseManager.callFunction<{
+            x_refresh_token: number
+            refresh_token: string
+            access_token: string
+            token_type: string
+            expires_in: number
+        }>('quickbookCallback', data)
     }
 }
 

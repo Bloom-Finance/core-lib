@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import _ from 'lodash'
 import { UIApp } from '../../../../stores/app.store'
 import { quickbookService } from '../../../services/quickbook.service'
-import axios from 'axios'
+import { quickbookLogIn } from '../../helpers/utils'
 const withPreFetch = <P extends object>(Component: React.ComponentType<P>) => {
     const PreFetch = (props: any) => {
         const router = useRouter()
@@ -18,28 +18,7 @@ const withPreFetch = <P extends object>(Component: React.ComponentType<P>) => {
                 merchant?.id as string
             )
             if (!hasToken) {
-                const { data } = await axios.post(
-                    'http://localhost:5001/bloom-trade/us-central1/connect_quickbook',
-                    {
-                        merchant
-                    }
-                )
-                const win = window.open(
-                    data,
-                    'bloom',
-                    'scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,height=0,left=-1000,top=-1000'
-                )
-                const timer = setInterval(async () => {
-                    if (win && win.closed) {
-                        clearInterval(timer)
-                        const { hasToken, token } =
-                            await quickbookService.checkToken(
-                                merchant?.id as string
-                            )
-                        setHasToken(hasToken)
-                        setAccessToken(token?.access_token)
-                    }
-                }, 1000)
+                quickbookLogIn(merchant as Merchant)
             } else {
                 const { hasToken, token } = await quickbookService.checkToken(
                     merchant?.id as string
@@ -54,7 +33,11 @@ const withPreFetch = <P extends object>(Component: React.ComponentType<P>) => {
             })()
         }, [])
         return hasToken && accessToken ? (
-            <Component {...props} accessToken={accessToken} />
+            <Component
+                {...props}
+                accessToken={accessToken}
+                merchant={merchant}
+            />
         ) : (
             <Loader />
         )
