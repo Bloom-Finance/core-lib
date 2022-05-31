@@ -6,7 +6,7 @@ const quickbookLogIn = async (merchant: Merchant) => {
     const { data } = await firebaseManager.callFunction('quickbookConnect', {
         merchant
     })
-    document.location.href = data
+    document.location.href = data as string
 }
 
 export { quickbookLogIn }

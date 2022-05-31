@@ -15,6 +15,8 @@ class OrderService {
         const docSnap = await getDoc(docRef)
         const order = docSnap.data() as Order
 
+        if (!order) return null
+
         const merchant = await merchantService.get(order.merchant.toString())
         return {
             ...order,
