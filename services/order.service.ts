@@ -23,9 +23,13 @@ class OrderService {
             merchant
         } as unknown as Order
     }
-    async newOrder(order: Order) {
+    async newOrder(order: Order, access_token: string) {
         try {
-            await setDoc(doc(firebaseManager.getDB(), 'payments'), order)
+            await setDoc(
+                doc(firebaseManager.getDB(), 'orders', order.id),
+                order
+            )
+            await axios.post('/api/order/new', { order, access_token })
             // Informar el order al topic
         } catch (error) {
             console.error(error)
