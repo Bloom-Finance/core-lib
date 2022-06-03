@@ -23,7 +23,7 @@ class OrderService {
             merchant
         } as unknown as Order
     }
-    async newOrder(order: Order, access_token: string) {
+    async newOrder(order: Order, access_token?: string) {
         try {
             await setDoc(
                 doc(firebaseManager.getDB(), 'orders', order.id),
