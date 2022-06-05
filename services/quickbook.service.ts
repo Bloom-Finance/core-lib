@@ -39,6 +39,7 @@ interface IQuickbookService {
             access_token: string
             token_type: string
             expires_in: number
+            hasToRefresh: boolean
         }>
     >
 }
@@ -60,6 +61,7 @@ class QuickBookService implements IQuickbookService {
             access_token: string
             token_type: string
             expires_in: number
+            hasToRefresh: boolean
         }>
     > {
         return firebaseManager.callFunction<{
@@ -68,6 +70,7 @@ class QuickBookService implements IQuickbookService {
             access_token: string
             token_type: string
             expires_in: number
+            hasToRefresh: boolean
         }>('quickbookRefresh', {
             refresh_token,
             merchant,
@@ -99,12 +102,18 @@ class QuickBookService implements IQuickbookService {
                 merchant.quickbook.refresh_token,
                 merchant
             )
-            return {
-                hasToken: true,
-                token: {
-                    refresh_token: data.refresh_token,
-                    access_token: data.access_token,
-                    expires_in: data.expires_in
+            if (data.hasToRefresh) {
+                return {
+                    hasToken: false
+                }
+            } else {
+                return {
+                    hasToken: true,
+                    token: {
+                        refresh_token: data.refresh_token,
+                        access_token: data.access_token,
+                        expires_in: data.expires_in
+                    }
                 }
             }
         } else {
