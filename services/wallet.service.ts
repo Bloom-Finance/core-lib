@@ -124,15 +124,16 @@ export class WalletManager {
 
     async getBalances() {
         const balances: any = await Moralis.Web3API.account.getTokenBalances({
-            chain: 'ropsten',
+            chain: this.getCurrentChainId().type as any,
             address: this.getAddressCurrentUser()
         })
 
         const native = await Moralis.Web3API.account.getNativeBalance({
-            chain: 'ropsten',
+            chain: this.getCurrentChainId().type as any,
             address: this.getAddressCurrentUser()
         })
 
+        console.log(native)
         balances.push({
             balance: native.balance,
             decimals: '18',
