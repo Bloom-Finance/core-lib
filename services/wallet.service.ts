@@ -35,9 +35,6 @@ export class WalletManager {
                 const isBrowser = () => typeof window !== 'undefined'
                 logout()
                 removeToken()
-                if (isBrowser()) {
-                    window.location.reload()
-                }
             }
         })
     }
@@ -133,7 +130,6 @@ export class WalletManager {
             address: this.getAddressCurrentUser()
         })
 
-        console.log(native)
         balances.push({
             balance: native.balance,
             decimals: '18',
