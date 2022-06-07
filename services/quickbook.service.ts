@@ -42,11 +42,54 @@ interface IQuickbookService {
             hasToRefresh: boolean
         }>
     >
+    getCustomers(
+        accessToken: string,
+        realmId: string
+    ): Promise<HttpsCallableResult<any>>
+    getItems(
+        accessToken: string,
+        realmId: string
+    ): Promise<HttpsCallableResult<any>>
 }
 
 class QuickBookService implements IQuickbookService {
     /**
-     * @description Gets the access token from a refresh token
+     * It calls the cloud function quickbookGetCustomers with the parameters accessToken and realmId.
+     * @param {string} accessToken - The access token that you got from the QuickBooks API.
+     * @param {string} realmId - The realmId is the unique identifier for your company. You can find
+     * this in the URL when you are logged into QuickBooks.
+     * @returns The return value is a Promise that resolves to an object of type HttpsCallableResult.
+     */
+    getItems(
+        accessToken: string,
+        realmId: string
+    ): Promise<HttpsCallableResult<any>> {
+        return firebaseManager.callFunction('quickbookGetItems', {
+            accessToken,
+            realmId
+        })
+    }
+    /**
+     * It calls the cloud function quickbookGetCustomer with the parameters accessToken and realmId.
+     * @param {string} accessToken - The access token that you got from the OAuth flow.
+     * @param {string} realmId - The realmId is the unique identifier for your company. You can find
+     * this in the URL when you are logged into QuickBooks.
+     * @returns The return value is a promise that resolves to an object of type HttpsCallableResult.
+     */
+    getCustomers(
+        accessToken: string,
+        realmId: string
+    ): Promise<HttpsCallableResult<any>> {
+        return firebaseManager.callFunction('quickbookGetCustomers', {
+            accessToken,
+            realmId
+        })
+    }
+    /**
+     * @description Gets the access token from a refr
+    getCustomers(): Promise<HttpsCallableResult<any>> {
+        throw new Error('Method not implemented.')
+    }esh token
      * @param refresh_token The refresh token needed
      * @param merchant The owner of the refresh_token
      * @return An object with all the tokens
