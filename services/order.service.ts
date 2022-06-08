@@ -34,11 +34,17 @@ class OrderService {
                 doc(firebaseManager.getDB(), 'orders', order.id),
                 order
             )
+            let total_amount = 0
+            order.items.forEach(v => {
+                total_amount += v.amount
+            })
+            const amountToSave = total_amount.toString()
             await axios.post('/api/order/new', {
                 order,
                 access_token,
                 customer,
-                item
+                item,
+                total_amount: amountToSave
             })
         } catch (error) {
             console.error(error)
