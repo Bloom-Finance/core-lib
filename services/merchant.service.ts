@@ -16,9 +16,10 @@ class MerchantService implements IMerchantService {
     }
 
     async get(id: string): Promise<Merchant> {
-        const docRef = doc(firebaseManager.getDB(), COLLECTION, id)
+        const docRef = doc(this.db, COLLECTION, id.toString())
         const docSnap = await getDoc(docRef)
-        return docSnap.data() as Merchant
+        const merchant = docSnap.data()
+        return merchant as Merchant
     }
 }
 
