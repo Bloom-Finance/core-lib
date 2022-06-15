@@ -52,13 +52,13 @@ class OrderService {
     }
     async addPayment(orderId: string, paymentInfo: any) {
         const pay_with: any = {}
-
+        // si es preorder ejecuta crear el order
         if (paymentInfo.payment_type === 'CREDIT CARD')
             pay_with.stripe = paymentInfo
 
         if (paymentInfo.payment_type === 'BANK TRANSFER')
             pay_with.bank_transfer = paymentInfo
-
+        Object.assign(pay_with, { payment_type: paymentInfo.payment_type })
         const payment: Payment = {
             id: nanoid(),
             date: new Date().getTime(),
