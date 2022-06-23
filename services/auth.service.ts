@@ -4,7 +4,7 @@ import { firebaseManager } from './firebase.services'
 export const tokenDecode = (token: string): SessionUser => {
     return jwt.decode(token) as SessionUser
 }
-export const encodeToken = (data: any): string => {
+export const encodeToken = (data: SessionUser): string => {
     return jwt.sign(data, process.env.SECRET_KEY as string)
 }
 export const setToken = async (token: string) => {
@@ -19,6 +19,5 @@ export const removeToken = () => {
 export const userAlreadyExist = async (id: string) => {
     const docRef = doc(firebaseManager.getDB(), 'users', id)
     const docSnap = await getDoc(docRef)
-
     return docSnap.exists()
 }
