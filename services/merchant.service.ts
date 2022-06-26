@@ -1,6 +1,6 @@
 import { FirebaseManager, firebaseManager } from './firebase.services'
 import { getDoc } from '@firebase/firestore'
-import { doc, updateDoc } from 'firebase/firestore'
+import { collection, doc, updateDoc, where, query } from 'firebase/firestore'
 import { HttpsCallableResult } from 'firebase/functions'
 
 const COLLECTION = 'merchant'
@@ -21,13 +21,51 @@ interface IMerchantService {
         user_id: string,
         role: string
     ): Promise<void>
+    getEmployeeByMerchant(
+        user_id: string,
+        merchantId: string
+    ): Promise<User | undefined>
+    updateInvite(invite_id: string): Promise<void>
 }
 
 class MerchantService implements IMerchantService {
     private db
-
     constructor(fm: FirebaseManager) {
         this.db = fm.getDB()
+    }
+    async updateInvite(invite_id: string): Promise<void> {
+        const docRef = doc(firebaseManager.getDB(), 'invites', invite_id)
+        await updateDoc(docRef, {
+            used: true
+        })
+    }
+    /**
+     * It gets the merchant document from the database, then it gets the user document from the
+     * database, then it returns the user document
+     * @param {string} user_id - The user id of the employee you want to get
+     * @param {string} merchantId - The id of the merchant
+     * @returns a promise that resolves to a User or undefined.
+     */
+    async getEmployeeByMerchant(
+        user_id: string,
+        merchantId: string
+    ): Promise<User | undefined> {
+        const docRef = doc(firebaseManager.getDB(), COLLECTION, merchantId)
+        const merchantDB = (await (await getDoc(docRef)).data()) as Merchant
+        const employee = merchantDB.employees.find(
+            employee => employee.user_id === user_id
+        )
+        if (!employee) {
+            return
+        } else {
+            const docRefUser = doc(
+                firebaseManager.getDB(),
+                'users',
+                employee.user_id
+            )
+            const userDB = (await (await getDoc(docRefUser)).data()) as User
+            return userDB
+        }
     }
     /**
      * It takes an inviteId as a string and returns a string that is the hostname of the current page
