@@ -51,6 +51,12 @@ export class WalletManager {
      * @description Function that receivs a chain from the WC connection and returns it formatted
      */
     getCurrentChainId() {
+        if (process.env.RUNTIME === 'DEV')
+            return {
+                type: 'goerli',
+                label: 'Goerli'
+            }
+
         return FormatterManager.formatChains(
             this.activeProvider.provider?.chainId as number
         )

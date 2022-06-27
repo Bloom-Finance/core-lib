@@ -19,7 +19,7 @@ import {
     getDownloadURL,
     connectStorageEmulator
 } from 'firebase/storage'
-
+import { getAuth } from 'firebase/auth'
 const RUNTIME = process.env.RUNTIME || 'DEV'
 
 export class FirebaseManager {
@@ -31,8 +31,14 @@ export class FirebaseManager {
     private functions: Functions | undefined
     constructor() {
         if (RUNTIME === 'DEV') {
-            this.firebaseApp = initializeApp({ projectId: 'bloom-trade' })
-            console.log(this.firebaseApp)
+            this.firebaseApp = initializeApp(
+                JSON.parse(
+                    Buffer.from(
+                        process.env.FIREBASE as string,
+                        'base64'
+                    ).toString()
+                )
+            )
             this.functions = getFunctions()
             this.db = getFirestore()
             connectFirestoreEmulator(this.db, 'localhost', 8080)
@@ -63,7 +69,7 @@ export class FirebaseManager {
         return this.realTimeDB
     }
     getAuth() {
-        return this.firebaseApp.getAuth()
+        return getAuth(this.firebaseApp)
     }
     getFunction(functionName: CloudFunctions) {
         return httpsCallable(this.functions as Functions, functionName)

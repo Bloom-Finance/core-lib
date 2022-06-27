@@ -58,6 +58,9 @@ class OrderService {
 
         if (paymentInfo.payment_type === 'BANK TRANSFER')
             pay_with.bank_transfer = paymentInfo
+
+        if (paymentInfo.payment_type === 'CRYPTO') pay_with.crypto = paymentInfo
+
         Object.assign(pay_with, { payment_type: paymentInfo.payment_type })
         const payment: Payment = {
             id: nanoid(),
@@ -65,9 +68,9 @@ class OrderService {
             order_id: orderId,
             pay_with,
             status:
-                paymentInfo.payment_type === 'CREDIT CARD'
-                    ? 'CONFIRMED'
-                    : 'IN REVIEW'
+                paymentInfo.payment_type === 'BANK TRANSFER'
+                    ? 'IN REVIEW'
+                    : 'CONFIRMED'
         }
 
         await setDoc(
@@ -83,9 +86,9 @@ class OrderService {
 
         await updateDoc(storedOrder, {
             status:
-                paymentInfo.payment_type === 'CREDIT CARD'
-                    ? 'PAYED'
-                    : 'IN REVIEW',
+                paymentInfo.payment_type === 'BANK TRANSFER'
+                    ? 'IN REVIEW'
+                    : 'PAYED',
             payment_info: {
                 issued_at: new Date().getTime(),
                 payment_id: payment.id
