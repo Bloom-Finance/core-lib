@@ -32,6 +32,7 @@ export class FirebaseManager {
     constructor() {
         if (RUNTIME === 'DEV') {
             this.firebaseApp = initializeApp({ projectId: 'bloom-trade' })
+            console.log(this.firebaseApp)
             this.functions = getFunctions()
             this.db = getFirestore()
             connectFirestoreEmulator(this.db, 'localhost', 8080)
