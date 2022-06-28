@@ -135,7 +135,8 @@ export class WalletManager {
             chain: this.getCurrentChainId().type as any,
             address: this.getAddressCurrentUser()
         })
-
+        console.log(balances)
+        console.log(native)
         balances.push({
             balance: native.balance,
             decimals: '18',
