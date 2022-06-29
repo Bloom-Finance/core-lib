@@ -159,6 +159,7 @@ export class WalletManager {
 
     rankTransactions(balances: Array<any>) {
         const list = []
+        console.log(balances)
         for (const i in balances) {
             let element = balances[i]
             if (balances[i].symbol === 'USDT') {
