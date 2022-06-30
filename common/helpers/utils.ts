@@ -3,6 +3,7 @@ import axios from 'axios'
 import { firebaseManager } from '../../services/firebase.services'
 
 const quickbookLogIn = async (merchant: Merchant) => {
+    console.log('calling')
     const { data } = await firebaseManager.callFunction('quickbookConnect', {
         merchant
     })
