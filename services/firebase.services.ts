@@ -59,6 +59,7 @@ export class FirebaseManager {
                     ).toString()
                 )
             )
+            this.storage = getStorage(this.firebaseApp)
         }
     }
     getDB() {
