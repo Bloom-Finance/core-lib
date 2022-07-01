@@ -51,15 +51,20 @@ export class WalletManager {
      * @description Function that receivs a chain from the WC connection and returns it formatted
      */
     getCurrentChainId() {
-        if (process.env.RUNTIME === 'DEV')
-            return {
-                type: 'goerli',
-                label: 'Goerli'
-            }
-
-        return FormatterManager.formatChains(
-            this.activeProvider.provider?.chainId as number
-        )
+        //For testing purposes only
+        //Change when the real chain is ready
+        // if (process.env.RUNTIME === 'DEV')
+        //     return {
+        //         type: 'goerli',
+        //         label: 'Goerli'
+        //     }
+        return {
+            type: 'goerli',
+            label: 'Goerli'
+        }
+        // return FormatterManager.formatChains(
+        //     this.activeProvider.provider?.chainId as number
+        // )
     }
 
     /**
@@ -130,7 +135,6 @@ export class WalletManager {
             chain: this.getCurrentChainId().type as any,
             address: this.getAddressCurrentUser()
         })
-
         const native = await Moralis.Web3API.account.getNativeBalance({
             chain: this.getCurrentChainId().type as any,
             address: this.getAddressCurrentUser()
