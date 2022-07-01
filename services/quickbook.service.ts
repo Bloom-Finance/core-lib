@@ -1,6 +1,5 @@
-import axios, { AxiosPromise } from 'axios'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
-import { HttpsCallable, HttpsCallableResult } from 'firebase/functions'
+import { HttpsCallableResult } from 'firebase/functions'
 import { firebaseManager } from './firebase.services'
 
 interface IQuickbookService {
