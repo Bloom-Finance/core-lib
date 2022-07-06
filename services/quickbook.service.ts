@@ -1,8 +1,11 @@
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { HttpsCallableResult } from 'firebase/functions'
 import { firebaseManager } from './firebase.services'
-
 interface IQuickbookService {
+    updateQuickbooksConnection(
+        connected: boolean,
+        merchant: Merchant
+    ): Promise<void>
     exchangeTokens(data: {
         redirect_uri: string
         code: string
@@ -50,8 +53,30 @@ interface IQuickbookService {
         realmId: string
     ): Promise<HttpsCallableResult<any>>
 }
-
 class QuickBookService implements IQuickbookService {
+    /**
+     * It updates the `quickbook` property of the `merchant` document in the `merchant` collection
+     * @param {boolean} connected - boolean - This is a boolean value that indicates whether the
+     * merchant is connected to Quickbooks or not.
+     * @param {Merchant} merchant - Merchant - this is the merchant object that is passed in from the
+     * component.
+     */
+    async updateQuickbooksConnection(
+        connected: boolean,
+        merchant: Merchant
+    ): Promise<void> {
+        const docRef = await doc(
+            firebaseManager.getDB(),
+            'merchant',
+            merchant.id as string
+        )
+        await updateDoc(docRef, {
+            quickbook: {
+                ...merchant.quickbook,
+                connected
+            }
+        })
+    }
     /**
      * It calls the cloud function quickbookGetCustomers with the parameters accessToken and realmId.
      * @param {string} accessToken - The access token that you got from the QuickBooks API.

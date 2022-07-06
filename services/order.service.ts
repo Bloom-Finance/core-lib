@@ -1,4 +1,13 @@
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import {
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    setDoc,
+    updateDoc,
+    where,
+    query
+} from 'firebase/firestore'
 import { firebaseManager, FirebaseManager } from './firebase.services'
 import { merchantService } from './merchant.service'
 import { customAlphabet } from 'nanoid'
@@ -22,6 +31,16 @@ class OrderService {
             ...order,
             merchant
         } as unknown as Order
+    }
+    async getOrdersByMerchant(merchant_id: string) {
+        const docRef = await collection(firebaseManager.getDB(), 'orders')
+        const q = await query(docRef, where('merchant', '==', merchant_id))
+        const querySnapshot = await getDocs(q)
+        const orders: any[] = []
+        querySnapshot.forEach(doc => {
+            orders.push(doc.data())
+        })
+        return orders as Order[]
     }
     async newOrder(
         order: Order,
